@@ -10,8 +10,11 @@ import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 public class FoodPage {
     private WebDriverWait wait;
@@ -71,6 +74,28 @@ public class FoodPage {
         assertEquals(nameItem, name, "Name does not match");
         assertEquals(typeItem, category, "Category does not match");
         assertEquals(valueExot, value, "Value does not match");
+    }
+    public void checkNewSameItem(String fruitName){
+        Integer countSameItem = 0;
+        WebElement table = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//tbody")));
+        List<WebElement> rows = table.findElements(By.tagName("tr"));
+        for (WebElement row : rows) {
+            List<WebElement> columns = row.findElements(By.tagName("td"));
+            if(columns.size() > 0 && columns.get(0).getText().equals(fruitName)){
+                Integer id = Integer.parseInt(row.findElement(By.xpath("./th")).getText());
+                String name = columns.get(0).getText();
+                String type = columns.get(1).getText();
+                String exot = columns.get(2).getText();
+                System.out.println("id: " + id);
+                System.out.println("name: " + name);
+                System.out.println("type: " + type);
+                System.out.println("exot: " + exot);
+                countSameItem++;
+            }
+        }
+        assertNotEquals(countSameItem, 0, "Cant add same element");
+
+
     }
 
 

@@ -17,6 +17,7 @@ import java.util.concurrent.TimeUnit;
 public class FirstTest {
     public static FoodPage foodPage;
     public static WebDriver driver;
+    public static TestSql testSql;
 
     @BeforeAll
     static void setup(){
@@ -28,30 +29,49 @@ public class FirstTest {
         driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
         driver.manage().timeouts().getScriptTimeout();
         foodPage = new FoodPage(driver);
+        testSql = new TestSql();
 
     }
 
     @Test
     void test1(){
+        String nameItem = "Кабачок";
         foodPage.ClickAdd();
-        foodPage.inputName("Кабачок");
+        foodPage.inputName(nameItem);
         foodPage.Type("VEGETABLE");
         foodPage.SaveItem();
-        foodPage.checkNewItem("Кабачок", "Овощ", "false");
+        foodPage.checkNewItem (nameItem, "Овощ", "false");
+        testSql.searchItemByName(nameItem, "VEGETABLE", "false");
+
     }
 
     @Test
     void test2(){
+        String nameItem = "Папая";
         foodPage.ClickAdd();
         foodPage.inputName("Папая");
         foodPage.Type("FRUIT");
         foodPage.setExot();
         foodPage.SaveItem();
         foodPage.checkNewItem("Папая", "Фрукт", "true");
+        testSql.searchItemByName(nameItem, "FRUIT", "true");
+
     }
+    @Test
+    void test3(){
+        foodPage.ClickAdd();
+        foodPage.inputName("Капуста");
+        foodPage.Type("VEGETABLE");
+        foodPage.SaveItem();
+        foodPage.checkNewSameItem("Капуста");
+        testSql.getCountOfFood("Капуста","VEGETABLE");
+
+    }
+
     @AfterEach
     @Test
     void cleaning(){
+        testSql.deleteUnwantedFoods();
         foodPage.ClearAll();
     }
     @AfterAll
